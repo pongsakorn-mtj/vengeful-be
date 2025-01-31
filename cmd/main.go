@@ -47,24 +47,15 @@ func main() {
 	// Initialize router
 	router := gin.Default()
 
-	// Configure CORS
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
-		"https://vengeful.onrender.com",
-	}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{
-		"Origin",
-		"Content-Type",
-		"Accept",
-		"Authorization",
-		"X-Requested-With",
-	}
-	config.ExposeHeaders = []string{"Content-Length"}
-	config.AllowCredentials = true
-	config.MaxAge = 12 * 60 * 60 // 12 hours
-
-	router.Use(cors.New(config))
+	// Configure CORS - Allow all origins
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", "User-Agent", "Referer"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false, // Must be false when AllowOrigins is ["*"]
+		MaxAge:           12 * 60 * 60,
+	}))
 
 	// Add middleware
 	router.Use(middleware.Logger(logger))
