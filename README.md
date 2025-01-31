@@ -143,6 +143,143 @@ GET /api/users
 - Secure headers
 - MongoDB authentication
 
+## Run Instructions
+
+### Development
+```bash
+# Run directly with Go
+go run cmd/main.go
+
+# Or build and run
+go build -o vengeful-be cmd/main.go
+./vengeful-be
+```
+
+### Production
+```bash
+# Build optimized binary
+go build -tags netgo -ldflags '-s -w' -o vengeful-be cmd/main.go
+
+# Run with production environment
+GIN_MODE=release ./vengeful-be
+
+# Run in background with nohup
+nohup GIN_MODE=release ./vengeful-be > app.log 2>&1 &
+
+# Run with specific port
+PORT=3000 GIN_MODE=release ./vengeful-be
+
+# Run with PM2 (if installed)
+pm2 start ./vengeful-be --name "vengeful-api"
+```
+
+### Environment Variables
+```bash
+# Required variables
+export MONGO_ROOT_USERNAME=your_username
+export MONGO_ROOT_PASSWORD=your_password
+export MONGODB_DATABASE=your_database
+export MONGODB_COLLECTION_NAME=users
+export MONGODB_HOST=your_mongodb_host
+export PORT=8080
+
+# Optional variables
+export GIN_MODE=release     # Set Gin to release mode
+export LOG_LEVEL=info      # Set log level (debug, info, warn, error)
+```
+
+### Using Docker (if containerized)
+```bash
+# Build Docker image
+docker build -t vengeful-be .
+
+# Run container
+docker run -d \
+  -p 8080:8080 \
+  -e MONGO_ROOT_USERNAME=your_username \
+  -e MONGO_ROOT_PASSWORD=your_password \
+  -e MONGODB_DATABASE=your_database \
+  -e MONGODB_HOST=your_mongodb_host \
+  --name vengeful-api \
+  vengeful-be
+```
+
+### Health Check
+```bash
+# Check if service is running
+curl http://localhost:8080/api/health
+
+# Monitor logs
+tail -f app.log
+```
+
+## Build Instructions
+
+### Development Build
+```bash
+go build -o vengeful-be cmd/main.go
+```
+
+### Production Build
+```bash
+# Optimized build with reduced binary size
+go build -tags netgo -ldflags '-s -w' -o vengeful-be cmd/main.go
+
+# Build for specific platform (example: Linux AMD64)
+GOOS=linux GOARCH=amd64 go build -tags netgo -ldflags '-s -w' -o vengeful-be cmd/main.go
+
+# Build for multiple platforms
+# Linux
+GOOS=linux GOARCH=amd64 go build -tags netgo -ldflags '-s -w' -o vengeful-be-linux-amd64 cmd/main.go
+# macOS
+GOOS=darwin GOARCH=amd64 go build -tags netgo -ldflags '-s -w' -o vengeful-be-darwin-amd64 cmd/main.go
+# Windows
+GOOS=windows GOARCH=amd64 go build -tags netgo -ldflags '-s -w' -o vengeful-be-windows-amd64.exe cmd/main.go
+```
+
+### Running the Built Binary
+
+#### Linux/macOS
+```bash
+# Basic run
+./vengeful-be
+
+# Run with environment variables
+MONGO_ROOT_USERNAME=user MONGO_ROOT_PASSWORD=pass ./vengeful-be
+
+# Run in production mode
+GIN_MODE=release ./vengeful-be
+
+# Run with custom port
+PORT=3000 ./vengeful-be
+
+# Run in background
+nohup ./vengeful-be > app.log 2>&1 &
+
+# Run with all options
+GIN_MODE=release PORT=3000 MONGO_ROOT_USERNAME=user MONGO_ROOT_PASSWORD=pass ./vengeful-be
+```
+
+#### Windows
+```bash
+# Basic run
+vengeful-be.exe
+
+# Run with environment variables (PowerShell)
+$env:MONGO_ROOT_USERNAME="user"; $env:MONGO_ROOT_PASSWORD="pass"; .\vengeful-be.exe
+
+# Run in production mode
+$env:GIN_MODE="release"; .\vengeful-be.exe
+
+# Run with custom port
+$env:PORT="3000"; .\vengeful-be.exe
+```
+
+Build flags explanation:
+- `-tags netgo`: Forces the use of Go's built-in DNS resolver
+- `-ldflags '-s -w'`: Reduces binary size by removing debug information and symbol tables
+- `-o vengeful-be`: Specifies the output binary name
+
 ## Setup
 1. Install Go 1.21 or later
 2. Clone the repository

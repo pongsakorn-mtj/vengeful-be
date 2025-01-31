@@ -8,6 +8,7 @@ import (
 	"vengeful-be/internal/middleware"
 	"vengeful-be/internal/repository"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -45,6 +46,25 @@ func main() {
 
 	// Initialize router
 	router := gin.Default()
+
+	// Configure CORS
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{
+		"https://vengeful.onrender.com",
+	}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{
+		"Origin",
+		"Content-Type",
+		"Accept",
+		"Authorization",
+		"X-Requested-With",
+	}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 12 * 60 * 60 // 12 hours
+
+	router.Use(cors.New(config))
 
 	// Add middleware
 	router.Use(middleware.Logger(logger))
