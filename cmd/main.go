@@ -70,7 +70,7 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.POST("/register", registerHandler.Register)
-		api.GET("/users", getUsersHandler.GetAll)
+		api.GET("/whosyourdaddy", getUsersHandler.GetAll)
 	}
 
 	// Start server
