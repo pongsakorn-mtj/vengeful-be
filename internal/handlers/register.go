@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"vengeful-be/internal/models"
 	"vengeful-be/internal/repository"
@@ -43,7 +44,7 @@ func (h *RegisterHandler) Register(c *gin.Context) {
 		"lastName":  request.LastName,
 	}).Info("Registration attempt")
 
-	// Validate acceptance of terms and policies
+	// Validate acceptance of terms and privacy policy
 	if !request.IsAcceptTnc || !request.IsAcceptPrivacyPolicy {
 		c.JSON(http.StatusBadRequest, models.RegisterResponse{
 			Status:  "error",
@@ -71,8 +72,9 @@ func (h *RegisterHandler) Register(c *gin.Context) {
 		return
 	}
 
-	// Create user in database
-	if err := h.userRepo.Create(c.Request.Context(), &request); err != nil {
+	// Create user and get marketing code
+	marketingCode, err := h.userRepo.Create(c.Request.Context(), &request)
+	if err != nil {
 		h.logger.WithError(err).Error("Failed to create user")
 		c.JSON(http.StatusInternalServerError, models.RegisterResponse{
 			Status:  "error",
@@ -81,8 +83,13 @@ func (h *RegisterHandler) Register(c *gin.Context) {
 		return
 	}
 
+	// Generate marketing URL
+	marketingURL := fmt.Sprintf("https://vengeful.onrender.com?ref=%s", marketingCode)
+
 	c.JSON(http.StatusOK, models.RegisterResponse{
-		Status:  "success",
-		Message: "Registration successful",
+		Status:        "success",
+		Message:       "Registration successful",
+		MarketingCode: marketingCode,
+		MarketingURL:  marketingURL,
 	})
 }

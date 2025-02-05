@@ -9,11 +9,14 @@ type RegisterRequest struct {
 	Email                 string `json:"email" binding:"required" validate:"required,email"`
 	IsAcceptTnc           bool   `json:"isAcceptTnc" binding:"required"`
 	IsAcceptPrivacyPolicy bool   `json:"isAcceptPrivacyPolicy" binding:"required"`
+	MarketingCode         string `json:"marketingCode"`
 }
 
 type RegisterResponse struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Status        string `json:"status"`
+	Message       string `json:"message"`
+	MarketingURL  string `json:"marketingUrl,omitempty"`
+	MarketingCode string `json:"marketingCode,omitempty"`
 }
 
 type UserResponse struct {
@@ -23,6 +26,8 @@ type UserResponse struct {
 	Email                 string    `json:"email"`
 	IsAcceptTnc           bool      `json:"isAcceptTnc"`
 	IsAcceptPrivacyPolicy bool      `json:"isAcceptPrivacyPolicy"`
+	MarketingCode         string    `json:"marketingCode"`
+	MarketedBy            string    `json:"marketedBy,omitempty"`
 	CreatedAt             time.Time `json:"createdAt"`
 }
 
