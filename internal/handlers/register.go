@@ -84,7 +84,7 @@ func (h *RegisterHandler) Register(c *gin.Context) {
 	}
 
 	// Generate marketing URL
-	marketingURL := fmt.Sprintf("https://vengeful.onrender.com?ref=%s", marketingCode)
+	marketingURL := fmt.Sprintf("https://vengeful.onrender.com?mkt=%s", marketingCode)
 
 	c.JSON(http.StatusOK, models.RegisterResponse{
 		Status:        "success",
