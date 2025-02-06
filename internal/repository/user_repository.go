@@ -36,7 +36,7 @@ func NewUserRepository(collection *mongo.Collection) *UserRepository {
 }
 
 func (r *UserRepository) generateMarketingCode() (string, error) {
-	bytes := make([]byte, 6) // Generate 6 random bytes
+	bytes := make([]byte, 8) // Generate 8 random bytes for ~10-11 characters after base64 encoding
 	if _, err := rand.Read(bytes); err != nil {
 		return "", err
 	}
